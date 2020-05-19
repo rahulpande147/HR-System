@@ -11,6 +11,7 @@ public class ProjectDetails  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long projectid;
+
     private String projectname;
     private Long noOfEmployee;
     private Date startDate;

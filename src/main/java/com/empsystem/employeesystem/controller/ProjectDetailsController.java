@@ -30,6 +30,10 @@ public class ProjectDetailsController {
         projectDetailsService.addProject(projectDetails);
     }
 
+    @DeleteMapping
+    public void deleteProjectDetails (@PathVariable Long projectid){
+        projectDetailsRepository.deleteById(projectid);
+    }
 
 
 }

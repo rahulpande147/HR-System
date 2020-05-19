@@ -1,5 +1,6 @@
 package com.empsystem.employeesystem.services;
 
+import com.empsystem.employeesystem.Exception.NotFoundException;
 import com.empsystem.employeesystem.model.ProjectDetails;
 import com.empsystem.employeesystem.repo.ProjectDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,5 +29,16 @@ public class ProjectDetailsService {
         return projectDetailsRepository.findById(projectId);
     }
 
+    public ProjectDetails updateProjectDetails(Long projectid, ProjectDetails projectDetailsUpdated){
+        return projectDetailsRepository.findById(projectid)
+                 .map(projectDetails -> {
+                    projectDetails.setEndDate(projectDetailsUpdated.getEndDate());
+                    projectDetails.setNoOfEmployee(projectDetailsUpdated.getNoOfEmployee());
+                    projectDetails.setProjectDescription(projectDetailsUpdated.getProjectDescription());
+                    projectDetails.setProjectname(projectDetailsUpdated.getProjectname());
+                    projectDetails.setStartDate(projectDetailsUpdated.getStartDate());
+                return projectDetailsRepository.save(projectDetails);})
+                .orElseThrow(() -> new NotFoundException("Project not found with Id-" +projectid));
+    }
 
 }
