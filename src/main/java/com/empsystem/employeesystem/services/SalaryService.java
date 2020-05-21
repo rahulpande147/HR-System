@@ -5,12 +5,15 @@ import com.empsystem.employeesystem.model.Salary;
 import com.empsystem.employeesystem.repo.SalaryRepository;
 import com.empsystem.employeesystem.repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@CacheConfig(cacheNames = "salarycache")
 public class SalaryService {
 
     @Autowired
@@ -19,10 +22,12 @@ public class SalaryService {
     @Autowired
     private UserRepository userRepository;
 
+    @Cacheable
     public List<Salary> getAllSalaryInfo(){
         return salaryRepository.findAll();
     }
 
+    @Cacheable
     public Optional<Salary> getSalaryInfo(Long empid){
         return salaryRepository.findById(empid);
     }
@@ -35,6 +40,7 @@ public class SalaryService {
 
     }
 
+    @Cacheable
     public Salary updateSalaryInfo(Long empid,
                                    Salary salaryUpdated) {
         return salaryRepository.findById(empid)

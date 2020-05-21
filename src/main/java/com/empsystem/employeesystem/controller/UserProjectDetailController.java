@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/projectdetails")
+@RequestMapping("api/users/userprojectdetails")
 public class UserProjectDetailController {
 
     @Autowired
@@ -19,6 +19,7 @@ public class UserProjectDetailController {
 
     @Autowired
     private ProjectDetailsRepository projectDetailsRepository;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -29,13 +30,6 @@ public class UserProjectDetailController {
 
     @PostMapping("/{projectid}/users")
     public Users addUserToProjectInfo (@PathVariable Long projectid, @RequestBody Users users ){
-        return projectDetailsRepository.findById(projectid)
-                .map(projectDetails -> {
-                    users.setProjectDetails(projectDetails);
-                    return userRepository.save(users);
-                }).orElseThrow(() -> new NotFoundException("Project not found!"));
+        return userProjectDeatailService.addUserToProjectInfo(projectid, users);
     }
-
-
-
 }

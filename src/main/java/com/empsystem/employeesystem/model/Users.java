@@ -22,19 +22,21 @@ public class Users implements Serializable {
     private Gender gender;
 
     @Temporal(TemporalType.DATE)
-    @JsonFormat(shape=JsonFormat.Shape.STRING,
-            pattern = "dd-mm-yyyy" )
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "dd-mm-yyyy" )
     private Date dob;
-    private String dept;
+
     private String email;
+
     private String contactno;
+
     private String city;
+
     private String address;
 
     /*@OneToOne(fetch = FetchType.LAZY,
             cascade =  CascadeType.ALL,
             mappedBy = "users")*/
-    @JoinColumn(referencedColumnName = "salary_sal")
+    @JoinColumn(referencedColumnName= "sal", insertable = true)
     @JsonIgnore
     private Salary salary;
 
@@ -42,6 +44,29 @@ public class Users implements Serializable {
     @JoinColumn(name = "projectDetails_projectid")
     @JsonIgnore
     private ProjectDetails projectDetails;
+
+    @OneToOne (fetch = FetchType.LAZY,cascade = CascadeType.ALL,
+            mappedBy = "users")
+    private Department department;
+
+    public Users(Long empid, String username, String fname, String lname,
+                 Gender gender, Date dob, String email, String contactno,
+                 String city, String address, Salary salary, ProjectDetails projectDetails,
+                 Department department) {
+        this.empid = empid;
+        this.username = username;
+        this.fname = fname;
+        this.lname = lname;
+        this.gender = gender;
+        this.dob = dob;
+        this.email = email;
+        this.contactno = contactno;
+        this.city = city;
+        this.address = address;
+        this.salary = salary;
+        this.projectDetails = projectDetails;
+        this.department = department;
+    }
 
     public Users() {
     }
@@ -94,14 +119,6 @@ public class Users implements Serializable {
         this.dob = dob;
     }
 
-    public String getDept() {
-        return dept;
-    }
-
-    public void setDept(String dept) {
-        this.dept = dept;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -148,5 +165,13 @@ public class Users implements Serializable {
 
     public void setProjectDetails(ProjectDetails projectDetails) {
         this.projectDetails = projectDetails;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 }

@@ -24,7 +24,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @RestController
-    @RequestMapping("/api/users")
+@RequestMapping("/api/users")
 public class UserController {
 
     @Autowired
