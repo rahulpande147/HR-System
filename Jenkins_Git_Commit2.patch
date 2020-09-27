@@ -1,0 +1,12 @@
+Index: src/main/java/com/empsystem/employeesystem/model/Temp.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/com/empsystem/employeesystem/model/Temp.java	(date 1601219082721)
++++ src/main/java/com/empsystem/employeesystem/model/Temp.java	(date 1601219082721)
+@@ -0,0 +1,4 @@
++package com.empsystem.employeesystem.model;
++
++public class Temp {
++}
