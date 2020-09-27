@@ -1,14 +1,13 @@
 package com.empsystem.employeesystem.controller;
 
 import com.empsystem.employeesystem.model.ProjectDetails;
-import com.empsystem.employeesystem.model.Users;
 import com.empsystem.employeesystem.repo.ProjectDetailsRepository;
 import com.empsystem.employeesystem.services.ProjectDetailsService;
-import com.empsystem.employeesystem.services.UserProjectDeatailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("api/users/projectdetails")
@@ -21,7 +20,7 @@ public class ProjectDetailsController {
     private ProjectDetailsRepository projectDetailsRepository;
 
     @GetMapping
-    public List<ProjectDetails> getall (){
+    public CompletableFuture<List<ProjectDetails>> getall (){
         return projectDetailsService.getAll();
     }
 

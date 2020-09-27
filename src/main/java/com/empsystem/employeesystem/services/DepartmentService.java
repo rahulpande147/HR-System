@@ -5,11 +5,16 @@ import com.empsystem.employeesystem.model.Department;
 import com.empsystem.employeesystem.repo.DepartmentRepository;
 import com.empsystem.employeesystem.repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Service
+@CacheConfig(cacheNames = "departmentcache")
 public class DepartmentService {
 
     @Autowired
@@ -17,28 +22,35 @@ public class DepartmentService {
     @Autowired
     private UserRepository userRepository;
 
-    public List<Department> getDepartment (){
-        return departmentRepository.findAll();
+    public CompletableFuture<List<Department>> getDepartment (){
+        List<Department> dept = departmentRepository.findAll();
+        return CompletableFuture.completedFuture(dept);
     }
 
-    public Department addDepartment (Long empid, Department department){
+    public CompletableFuture<Department> addDepartment (Long empid, Department department){
         return userRepository.findById(empid).map(users -> {
             department.setUsers(users);
-            return departmentRepository.saveAndFlush(department);
+            Department dept= departmentRepository.saveAndFlush(department);
+            return CompletableFuture.completedFuture(dept);
         }).orElseThrow(() -> new NotFoundException("User not found"));
     }
 
+    @Async
+    @Cacheable
     public void deleteDepartment (Long departmentid){
-        departmentRepository.deleteById(departmentid);
+       departmentRepository.deleteById(departmentid);
     }
 
-    public Department updateDepartment (Long departmentid, Department departmentUpdated){
+    @Cacheable
+    @Async
+    public CompletableFuture<Department> updateDepartment (Long departmentid, Department departmentUpdated){
         return departmentRepository.findById(departmentid)
                 .map(department -> {
                     department.setEmpid(departmentUpdated.getEmpid());
                     department.setDepartmentname(departmentUpdated.getDepartmentname());
                     department.setDeptshortname(departmentUpdated.getDeptshortname());
-                    return departmentRepository.saveAndFlush(department);
+                    Department dept= departmentRepository.saveAndFlush(department);
+                    return CompletableFuture.completedFuture(dept);
                 }).orElseThrow(() -> new NotFoundException("Contact not found!"));
     }
 

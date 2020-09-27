@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.StringJoiner;
+import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,20 +34,22 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
-    public List<Users> list(){
+    @RequestMapping("/get")
+    public CompletableFuture<List<Users>> list(){
         return userService.getAllUsers();
     }
 
     @GetMapping
-    @RequestMapping("{empid}")
-    public Optional<Users> get(@PathVariable Long empid){
+    @RequestMapping("/get/{empid}")
+    public CompletableFuture<Optional<Users>> get(@PathVariable Long empid){
         return userService.getUserById(empid);
     }
 
     @PostMapping
+    @RequestMapping("/post")
     @ResponseStatus(HttpStatus.CREATED)
-    public void create(@RequestBody final Users users){
-        userService.addUser(users);
+    public CompletableFuture<Users> create(@RequestBody final Users users){
+        return userService.addUser(users);
     }
 
 
@@ -82,13 +84,13 @@ public class UserController {
                PageRequest.of(page.orElse(0), 5, Sort.Direction.ASC,sortBy.orElse("empid")));
    }*/
 
-   @GetMapping("/www")
+   @GetMapping("/search")
     @ResponseBody
     public List<Users> findAllBySpecification(@RequestParam(value = "search") String search){
        UsersSpecificationsBuilder builder = new UsersSpecificationsBuilder();
-       String operationSetExper = Joiner.on("|").join(SearchOperation.SIMPLE_OPERATION_SET);
+       String operationSet = Joiner.on("|").join(SearchOperation.SIMPLE_OPERATION_SET);
        Pattern pattern = Pattern.compile(
-               "(\\w+?)(" + operationSetExper + ")(\\p{Punct}?)(\\w+?)(\\p{Punct}?),");
+               "(\\w+?)(" + operationSet + ")(\\p{Punct}?)(\\w+?)(\\p{Punct}?),");
        Matcher matcher = pattern.matcher(search + ",");
        while (matcher.find()) {
            builder.with(matcher.group(1),

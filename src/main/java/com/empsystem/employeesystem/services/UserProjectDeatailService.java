@@ -28,7 +28,7 @@ public class UserProjectDeatailService {
         if(!projectDetailsRepository.existsById(projectid)){
             throw new NotFoundException("Project Not Found");
         }
-        return userRepository.findByProjectDetailsProjectid(projectid);
+         return userRepository.findByProjectDetailsProjectid(projectid);
     }
 
     @Cacheable

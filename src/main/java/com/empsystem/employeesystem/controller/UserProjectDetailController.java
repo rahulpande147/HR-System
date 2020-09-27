@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/users/userprojectdetails")
+@RequestMapping("api/users/user" +
+        "projectdetails")
 public class UserProjectDetailController {
 
     @Autowired

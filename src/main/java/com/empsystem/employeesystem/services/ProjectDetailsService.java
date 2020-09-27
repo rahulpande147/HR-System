@@ -3,16 +3,16 @@ package com.empsystem.employeesystem.services;
 import com.empsystem.employeesystem.Exception.NotFoundException;
 import com.empsystem.employeesystem.model.ProjectDetails;
 import com.empsystem.employeesystem.repo.ProjectDetailsRepository;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @CacheConfig(cacheNames = "projectcache")
@@ -22,8 +22,9 @@ public class ProjectDetailsService {
     private ProjectDetailsRepository projectDetailsRepository;
 
     @Cacheable
-    public List<ProjectDetails> getAll(){
-        return projectDetailsRepository.findAll();
+    public CompletableFuture<List<ProjectDetails>> getAll(){
+        List<ProjectDetails> projectDetails= projectDetailsRepository.findAll();
+        return CompletableFuture.completedFuture(projectDetails);
     }
 
     @Cacheable
@@ -31,13 +32,16 @@ public class ProjectDetailsService {
          projectDetailsRepository.saveAndFlush(projectDetails);
     }
 
+    @Async
     @Cacheable
-    public Optional<ProjectDetails> getOneById(Long projectId) {
-        return projectDetailsRepository.findById(projectId);
+    public CompletableFuture<Optional<ProjectDetails>> getOneById(Long projectId) {
+        Optional<ProjectDetails> projectDetails= projectDetailsRepository.findById(projectId);
+        return CompletableFuture.completedFuture(projectDetails);
     }
 
+    @Async
     @Cacheable
-    public ProjectDetails updateProjectDetails(Long projectid, ProjectDetails projectDetailsUpdated){
+    public CompletableFuture<ProjectDetails> updateProjectDetails(Long projectid, ProjectDetails projectDetailsUpdated){
         return projectDetailsRepository.findById(projectid)
                  .map(projectDetails -> {
                     projectDetails.setEndDate(projectDetailsUpdated.getEndDate());
@@ -45,7 +49,9 @@ public class ProjectDetailsService {
                     projectDetails.setProjectDescription(projectDetailsUpdated.getProjectDescription());
                     projectDetails.setProjectname(projectDetailsUpdated.getProjectname());
                     projectDetails.setStartDate(projectDetailsUpdated.getStartDate());
-                return projectDetailsRepository.save(projectDetails);})
+                    ProjectDetails projectDetails1= projectDetailsRepository.save(projectDetails);
+                 return CompletableFuture.completedFuture(projectDetails1);
+                 })
                 .orElseThrow(() -> new NotFoundException("Project not found with Id-" +projectid));
     }
 

@@ -1,4 +1,5 @@
 package com.empsystem.employeesystem.services;
+import com.empsystem.employeesystem.aopconfig.TrackExecutionTime;
 import com.empsystem.employeesystem.model.Users;
 import com.empsystem.employeesystem.repo.UserRepository;
 import org.slf4j.Logger;
@@ -11,10 +12,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @CacheConfig(cacheNames = "userscache")
@@ -25,23 +28,34 @@ public class UserService {
 
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
+    @Async
     @Cacheable
-    public List<Users> getAllUsers() {
-        return userRepository.findAll();
+    @TrackExecutionTime
+    public CompletableFuture<List<Users>> getAllUsers() {
+        final List<Users> users = userRepository.findAll();
+        return CompletableFuture.completedFuture(users);
     }
 
+    @Async
     @Cacheable
-    public Optional<Users> getUserById(Long empid) {
+    @TrackExecutionTime
+    public CompletableFuture<Optional<Users>> getUserById(Long empid) {
         log.info("Getting user by Id -", empid);
-        return userRepository.findById(empid);
-    } 
-
-    @Cacheable
-    public void addUser(Users users) {
-        userRepository.saveAndFlush(users);
+        Optional<Users> users = userRepository.findById(empid);
+        return CompletableFuture.completedFuture(users);
     }
 
+    @Async
     @Cacheable
+    @TrackExecutionTime
+    public CompletableFuture<Users> addUser(Users users) {
+        Users user = userRepository.saveAndFlush(users);
+        return CompletableFuture.completedFuture(user);
+    }
+
+    @Async
+    @Cacheable
+    @TrackExecutionTime
     public Users updateUser(Long empid, Users users) {
         Users existingUser = userRepository.getOne(empid);
         BeanUtils.copyProperties(users, existingUser, "empid");

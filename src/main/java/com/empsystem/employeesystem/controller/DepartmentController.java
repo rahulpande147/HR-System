@@ -7,20 +7,22 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
-@RestController("api/users/department")
+@RestController
+@RequestMapping("api/users/department")
 public class DepartmentController implements Serializable {
 
     @Autowired
     private DepartmentService departmentService;
 
     @GetMapping
-    public List<Department> getAllDepartment (){
+    public CompletableFuture<List<Department>> getAllDepartment (){
         return departmentService.getDepartment();
     }
 
     @PostMapping("/{empid}")
-    public Department addDepartment (@PathVariable Long empid, @RequestBody Department department){
+    public CompletableFuture<Department> addDepartment (@PathVariable Long empid, @RequestBody Department department){
         return departmentService.addDepartment(empid,department);
     }
 }

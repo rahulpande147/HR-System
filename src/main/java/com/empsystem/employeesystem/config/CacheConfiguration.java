@@ -1,4 +1,4 @@
-/*package com.empsystem.employeesystem.cacheconf;
+/*package com.empsystem.employeesystem.config;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.cache.CacheManager;
@@ -25,5 +25,4 @@ public class CacheConfiguration {
                 .weakKeys()
                 .recordStats();
     }
-}
-*/
+}*/
